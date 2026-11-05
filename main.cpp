@@ -8,10 +8,13 @@ using namespace std;
 
 int getScore();
 void displayScore(const int arr[], int size);
+int findMaxScore(const int arr[], int size);
+int findMinScore(const int arr[], int size);
 
 int main() {
 	const int CAPACITY = 6;
 	int scores[CAPACITY];
+	int maxScore, minScore;
 
 	cout << "Arcade Leaderboard\n" << endl;
 
@@ -19,8 +22,13 @@ int main() {
 		scores[i] = getScore();
 	}
 	
-	displayScore(scores,CAPACITY);
+	displayScore(scores, CAPACITY);
 
+	maxScore = findMaxScore(scores, CAPACITY);
+	minScore = findMinScore(scores, CAPACITY);
+
+	// lab 3 test
+	cout << "\nMin: " << minScore << "\nMax: " << maxScore;
 	return 0;
 }
 
@@ -53,4 +61,22 @@ void displayScore(const int arr[], int size) {
 	for (int i = 0; i < size; i++) {
 		cout << i + 1 << setw(5) << ":" << arr[i] << endl;
 	}
+}
+int findMaxScore(const int arr[], int size) {
+	int maxValue = arr[0];
+
+	for (int i = 1; i < size; i++) {
+		maxValue = max(maxValue, arr[i]);
+	}
+
+	return maxValue;
+}
+int findMinScore(const int arr[], int size) {
+	int minValue = arr[0];
+
+	for (int i = 1; i < size; i++) {
+		minValue = min(minValue, arr[i]);
+	}
+
+	return minValue;
 }
