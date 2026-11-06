@@ -6,19 +6,19 @@
 
 using namespace std;
 
+bool validateInput(int input);
 int getScore();
 void displayScore(const int arr[], int size);
 int findMaxScore(const int arr[], int size);
 int findMinScore(const int arr[], int size);
 bool updateScore(int arr[], int size, int slotIndex, int newScore);
+int countAboveThreshold(const int arr[], int size, int threshold);
 
 int main() {
 	const int CAPACITY = 6;
 	int scores[CAPACITY];
-	int maxScore, minScore, slotOption, newScore;
-
-	bool validInput = false,
-		scoreUpdated;
+	int maxScore, minScore, slotOption, newScore, reqThreshold = 8, valuesAboveThreshold;
+	bool scoreUpdated;
 
 	cout << "Arcade Leaderboard\n" << endl;
 
@@ -31,31 +31,22 @@ int main() {
 	maxScore = findMaxScore(scores, CAPACITY);
 	minScore = findMinScore(scores, CAPACITY);
 
+	cout << "Max Score: " << maxScore << "\nMin Score: " << minScore << '\n' << endl;
+
 	// Slot input validation
-	while (!validInput) {
+	while (true) {
 		cout << "Want to update a score? Pick a slot!\nSlot: ";
-		if (cin >> slotOption) {
-			validInput = true;
-		}
-		else {
-			cout << "Not an integer!" << CAPACITY << endl;
-			cin.clear();
-			cin.ignore(numeric_limits<streamsize>::max(), '\n');
-		}
+		cin >> slotOption;
+		if (validateInput(slotOption))
+			break;
 	}
 	
-	validInput = false;
 	// newScore input validation
-	while (!validInput) {
+	while (true) {
 		cout << "New Score: ";
-		if (cin >> newScore) {
-			validInput = true;
-		}
-		else {
-			cout << "Not an integer!" << CAPACITY << endl;
-			cin.clear();
-			cin.ignore(numeric_limits<streamsize>::max(), '\n');
-		}
+		cin >> newScore;
+		if (validateInput(newScore))
+			break;
 	}
 
 	scoreUpdated = updateScore(scores, CAPACITY, slotOption, newScore);
@@ -66,28 +57,35 @@ int main() {
 	else {
 		cout << "\nSlot " << slotOption << " out of 1-" << CAPACITY << " range, no score update!" << endl;
 	}
+	
+	valuesAboveThreshold = countAboveThreshold(scores, CAPACITY, reqThreshold);
+
+	cout << "\nThreshold Test\nScores above " << reqThreshold << ": " << valuesAboveThreshold << endl;
 
 	return 0;
 }
 
+bool validateInput(int input) {
+	if (!cin.fail()) {
+		return true;
+	}
+	else {
+		cout << "Not an integer!" << endl;
+		cin.clear();
+		cin.ignore(numeric_limits<streamsize>::max(), '\n');
+		return false;
+	}
+}
 int getScore() {
 	static int scoreIter = 1;
 	int userScore;
-	bool validInput = false;
 
-	while (!validInput) {
+	while (true) {
 		cout << "Enter Score " << scoreIter << ": ";
-		
-		if (cin >> userScore) {
-			validInput = true;
+		cin >> userScore;
+		if (validateInput(userScore)) {
 			scoreIter++;
 			return userScore;
-			cout << endl;
-		}
-		else {
-			cout << "Not an integer. Try again!" << endl;
-			cin.clear();
-			cin.ignore(numeric_limits<streamsize>::max(), '\n');
 		}
 	}
 	
@@ -128,4 +126,14 @@ bool updateScore(int arr[], int size, int slotIndex, int newScore) {
 		arr[slotIndex] = newScore;
 		return true;
 	}
+}
+int countAboveThreshold(const int arr[], int size, int threshold) {
+	int aboveThreshold = 0;
+
+	for (int i = 0; i < size; i++) {
+		if (arr[i] > threshold)
+			aboveThreshold++;
+	}
+
+	return aboveThreshold;
 }
