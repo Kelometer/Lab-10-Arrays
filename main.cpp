@@ -10,11 +10,15 @@ int getScore();
 void displayScore(const int arr[], int size);
 int findMaxScore(const int arr[], int size);
 int findMinScore(const int arr[], int size);
+bool updateScore(int arr[], int size, int slotIndex, int newScore);
 
 int main() {
 	const int CAPACITY = 6;
 	int scores[CAPACITY];
-	int maxScore, minScore;
+	int maxScore, minScore, slotOption, newScore;
+
+	bool validInput = false,
+		scoreUpdated;
 
 	cout << "Arcade Leaderboard\n" << endl;
 
@@ -27,8 +31,42 @@ int main() {
 	maxScore = findMaxScore(scores, CAPACITY);
 	minScore = findMinScore(scores, CAPACITY);
 
-	// lab 3 test
-	cout << "\nMin: " << minScore << "\nMax: " << maxScore;
+	// Slot input validation
+	while (!validInput) {
+		cout << "Want to update a score? Pick a slot!\nSlot: ";
+		if (cin >> slotOption) {
+			validInput = true;
+		}
+		else {
+			cout << "Not an integer!" << CAPACITY << endl;
+			cin.clear();
+			cin.ignore(numeric_limits<streamsize>::max(), '\n');
+		}
+	}
+	
+	validInput = false;
+	// newScore input validation
+	while (!validInput) {
+		cout << "New Score: ";
+		if (cin >> newScore) {
+			validInput = true;
+		}
+		else {
+			cout << "Not an integer!" << CAPACITY << endl;
+			cin.clear();
+			cin.ignore(numeric_limits<streamsize>::max(), '\n');
+		}
+	}
+
+	scoreUpdated = updateScore(scores, CAPACITY, slotOption, newScore);
+
+	if (scoreUpdated) {
+		cout << "\nScore Updated!\nSlot " << slotOption << ": " << scores[slotOption] << endl;
+	}
+	else {
+		cout << "\nSlot " << slotOption << " out of 1-" << CAPACITY << " range, no score update!" << endl;
+	}
+
 	return 0;
 }
 
@@ -61,6 +99,8 @@ void displayScore(const int arr[], int size) {
 	for (int i = 0; i < size; i++) {
 		cout << i + 1 << setw(5) << ":" << arr[i] << endl;
 	}
+
+	cout << endl;
 }
 int findMaxScore(const int arr[], int size) {
 	int maxValue = arr[0];
@@ -79,4 +119,13 @@ int findMinScore(const int arr[], int size) {
 	}
 
 	return minValue;
+}
+bool updateScore(int arr[], int size, int slotIndex, int newScore) {
+	if (slotIndex < 1 || slotIndex > size) {
+		return false;
+	}
+	else {
+		arr[slotIndex] = newScore;
+		return true;
+	}
 }
